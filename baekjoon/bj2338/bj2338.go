@@ -1,4 +1,4 @@
-package main
+package bj2338
 
 import (
 	"fmt"
