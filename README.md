@@ -1,11 +1,17 @@
-# Go: 백준 문제풀이 키워드
+# Go: 백준 나만의 문제풀이 키워드
+---
 
 #### 1001~2000
 - ``bj1075``
 - ``bj1100``: 배열, 슬라이스, strings 패키지 - 문자열 분할
 - ``bj1110``: 반복문
+- ``bj1152``: strings 패키지 - Split(), TrimSpace()
+- ``bj1225``: 반복문, strconv 패키지 - string(byte타입)을 정수로 변환
+- ``bj1267``
 - ``bj1271``: math/big 패키지 - big numbers
+- ``bj1284``: 포인터 슬라이스, bufio 패키지 - 스캐너
 - ``bj1297``: 피타고라스의 정리
+- ``bj1547``: bufio 패키지 - 스캐너, strings 패키지 - Split(), 포인터 변수
 
 #### 2001~3000
 - ``bj2338``: math/big 패키지 - big numbers
