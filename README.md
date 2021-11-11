@@ -7,6 +7,7 @@
 - ``bj1100``: 배열, 슬라이스, strings 패키지 - 문자열 분할
 - ``bj1110``: 반복문
 - ``bj1152``: strings 패키지 - Split(), TrimSpace()
+- ``bj1157``
 - ``bj1225``: 반복문, strconv 패키지 - string(byte타입)을 정수로 변환
 - ``bj1267``
 - ``bj1271``: math/big 패키지 - big numbers
@@ -59,3 +60,4 @@
 
 #### 11001~12000
 - ``bj11283``: unicode/utf8 패키지 - []byte 타입으로 입력을 받아 rune 타입으로 변환
+- ``bj11720``: byte 타입으로 읽어서 숫자의 합 구하기
