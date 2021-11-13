@@ -10,11 +10,13 @@
 - ``bj1157``
 - ``bj1181``: sort 패키지 - Slice() 함수의 두번째 인수로 커스텀 정렬 함수 리터럴
 - ``bj1225``: 반복문, strconv 패키지 - string(byte타입)을 정수로 변환
+- ``bj1259``
 - ``bj1267``
 - ``bj1271``: math/big 패키지 - big numbers
 - ``bj1284``: 포인터 슬라이스, bufio 패키지 - 스캐너
 - ``bj1297``: 피타고라스의 정리
 - ``bj1343``: strings 패키지 - Contains()로 확인하고 ReplaceAll()로 변환
+- ``bj1357``: strings 패키지 - Builder 타입으로 문자열 역순으로 붙이기
 - ``bj1371``: ioutil 패키지를 사용해 한 번에 읽은 뒤에 쪼개기
 - ``bj1439``: strings 패키지 - builder 타입
 - ``bj1547``: bufio 패키지 - 스캐너, strings 패키지 - Split(), 포인터 변수
