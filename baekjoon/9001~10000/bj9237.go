@@ -1,9 +1,10 @@
-package bj1789
+package bj9237
 
 import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -17,19 +18,24 @@ func main() {
 	scanner.Split(bufio.ScanWords)
 	n := scanInt()
 
-	sub := 1
-	cnt := 0
-	for n > 0 {
-		if n-sub <= sub {
-			cnt += 1
-			break
-		} else {
-			n -= sub
-			sub += 1
-			cnt += 1
-		}
+	days := make([]int, n)
+
+	for i := 0; i < n; i++ {
+		days[i] = scanInt()
 	}
-	fmt.Fprintln(writer, cnt)
+
+	sort.Ints(days)
+
+	max := 0
+	cnt := 2
+	for j := n - 1; j >= 0; j-- {
+		days[j] += cnt
+		if days[j] > max {
+			max = days[j]
+		}
+		cnt += 1
+	}
+	fmt.Fprintln(writer, max)
 }
 
 func scanInt() int {

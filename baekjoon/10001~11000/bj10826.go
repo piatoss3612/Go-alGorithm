@@ -1,8 +1,9 @@
-package bj1789
+package bj10826
 
 import (
 	"bufio"
 	"fmt"
+	"math/big"
 	"os"
 	"strconv"
 )
@@ -10,6 +11,7 @@ import (
 var (
 	scanner = bufio.NewScanner(os.Stdin)
 	writer  = bufio.NewWriter(os.Stdout)
+	dp      = map[int]*big.Int{0: big.NewInt(0), 1: big.NewInt(1)}
 )
 
 func main() {
@@ -17,23 +19,19 @@ func main() {
 	scanner.Split(bufio.ScanWords)
 	n := scanInt()
 
-	sub := 1
-	cnt := 0
-	for n > 0 {
-		if n-sub <= sub {
-			cnt += 1
-			break
-		} else {
-			n -= sub
-			sub += 1
-			cnt += 1
-		}
-	}
-	fmt.Fprintln(writer, cnt)
+	fmt.Fprintln(writer, fib(n))
 }
 
 func scanInt() int {
 	scanner.Scan()
 	n, _ := strconv.Atoi(scanner.Text())
 	return n
+}
+
+func fib(n int) *big.Int {
+	_, ok := dp[n]
+	if !ok {
+		dp[n] = big.NewInt(0).Add(fib(n-1), fib(n-2))
+	}
+	return dp[n]
 }

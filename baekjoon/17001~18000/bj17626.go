@@ -1,4 +1,4 @@
-package bj1789
+package bj17626
 
 import (
 	"bufio"
@@ -17,19 +17,18 @@ func main() {
 	scanner.Split(bufio.ScanWords)
 	n := scanInt()
 
-	sub := 1
-	cnt := 0
-	for n > 0 {
-		if n-sub <= sub {
-			cnt += 1
-			break
-		} else {
-			n -= sub
-			sub += 1
-			cnt += 1
+	dp := make([]int, n+1)
+	dp[1] = 1
+
+	for i := 2; i <= n; i++ {
+		dp[i] = dp[i-1] + 1
+		for j := 1; j*j <= i; j++ {
+			if dp[i-j*j] < dp[i] {
+				dp[i] = dp[i-j*j] + 1
+			}
 		}
 	}
-	fmt.Fprintln(writer, cnt)
+	fmt.Fprintln(writer, dp[n])
 }
 
 func scanInt() int {
