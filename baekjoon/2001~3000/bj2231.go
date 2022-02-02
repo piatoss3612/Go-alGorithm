@@ -20,7 +20,8 @@ func main() {
 	scanner.Scan()
 	n, _ := strconv.Atoi(scanner.Text())
 
-	for i := n - 50; i < n; i++ {
+	//가장 작은 생성자를 구해야 하므로 n - 100 (얼추 자릿수 * 9보다 큰 수)
+	for i := n - 100; i < n; i++ {
 		if isGenerator(i, n) {
 			fmt.Fprintln(writer, i)
 			return
