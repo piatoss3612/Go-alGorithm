@@ -2,15 +2,9 @@ package main
 
 import (
 	"bufio"
-	_ "bytes"
 	"fmt"
-	_ "io/ioutil"
-	_ "math"
-	_ "math/big"
 	"os"
-	_ "sort"
 	"strconv"
-	_ "strings"
 )
 
 var (
@@ -21,38 +15,27 @@ var (
 func main() {
 	defer writer.Flush()
 	scanner.Split(bufio.ScanWords)
-	dp := make([][]int, 10001)
-	for i := 0; i <= 10000; i++ {
-		dp[i] = make([]int, 10001)
+	dp := make([][]int, 100001)
+	for i := 0; i <= 100000; i++ {
+		dp[i] = make([]int, 2)
 	}
 
 	dp[1][1] = 1
+	dp[2][0] = 1
 	dp[2][1] = 1
-	dp[2][2] = 1
-	dp[3][1] = 1
-	dp[3][2] = 2
-	dp[3][3] = 1
+	dp[3][0] = 2
+	dp[3][1] = 2
 
-	for i := 4; i <= 10000; i++ {
-		for j := 1; j <= i; j++ {
-			dp[i][j] = (dp[i-3][j-1] + dp[i-2][j-1] + dp[i-1][j-1]) % 1000000009
-		}
+	for i := 4; i <= 100000; i++ {
+		dp[i][0] = (dp[i-3][1] + dp[i-2][1] + dp[i-1][1]) % 1000000009
+		dp[i][1] = (dp[i-3][0] + dp[i-2][0] + dp[i-1][0]) % 1000000009
 	}
 
 	t := scanInt()
 
-	for i := 1; i <= t; i++ {
+	for i := 0; i < t; i++ {
 		n := scanInt()
-		odd := 0
-		even := 0
-		for j := 1; j <= n; j++ {
-			if j%2 == 0 {
-				even = (even + dp[n][j]) % 1000000009
-			} else {
-				odd = (odd + dp[n][j]) % 1000000009
-			}
-		}
-		fmt.Fprintf(writer, "%d %d\n", odd, even)
+		fmt.Fprintln(writer, dp[n][1], dp[n][0])
 	}
 }
 
