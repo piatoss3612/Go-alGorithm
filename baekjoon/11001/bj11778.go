@@ -29,12 +29,7 @@ func main() {
 	n, m := scanInt(), scanInt()
 	/*
 		gcd(n번째 피보나치 수, m번째 피보나치 수) = gcd(n, m)번째 피보나치 수
-
-		유클리드 호제법의 성질: gcd(n, m) = gcd(m, n-m)
-
-		gcd(24번째 피보나치 수, 16번째 피보나치 수) = gcd(16번째 피보나치 수, 8(24-16)번째 피보나치 수)
-		= gcd(8번째 피보나치 수, 8번째 피보나치 수) = 8번째 피보나치 수 = 21
-
+		참고: https://www.cut-the-knot.org/arithmetic/algebra/FibonacciGCD.shtml
 	*/
 	fmt.Fprintln(writer, rec(gcd(n, m))[1])
 }
@@ -74,6 +69,7 @@ func rec(x int) []int {
 // 피보나치 행렬 곱셈
 func fibMul(a, b []int) []int {
 	res := make([]int, 4)
+	// gcd(n, m)번째 피보나치 수라는 것을 알고 있으므로 모듈러 연산을 사용할 수 있다
 	res[0] = (a[0]*b[0] + a[1]*b[2]) % P
 	res[1] = (a[0]*b[1] + a[1]*b[3]) % P
 	res[2] = (a[2]*b[0] + a[3]*b[2]) % P
