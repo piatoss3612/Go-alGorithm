@@ -11,97 +11,95 @@ import (
 var (
 	scanner = bufio.NewScanner(os.Stdin)
 	writer  = bufio.NewWriter(os.Stdout)
-	N, X    int
-	inp     []int
+	Q       int                  // 쿼리의 개수
+	gorilla map[string]*MaxValue // 맵의 [키]:값으로 [고릴라의 이름]:최대 힙에 저장된 고릴라가 가지고 있는 정보의 가치를 저장
+	ans     = 0                  // 호석이가 얻게 되는 정보 가치의 총합
 )
 
-type Lines []int
+// 최대 힙 타입 정의 및 인터페이스 구현
+type MaxValue []int
 
-func (l Lines) Len() int { return len(l) }
-func (l Lines) Less(i, j int) bool {
-	return l[i] < l[j]
+func (m MaxValue) Len() int { return len(m) }
+func (m MaxValue) Less(i, j int) bool {
+	return m[i] > m[j]
 }
-func (l Lines) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
-func (l *Lines) Push(x interface{}) {
-	*l = append(*l, x.(int))
+func (m MaxValue) Swap(i, j int) { m[i], m[j] = m[j], m[i] }
+func (m *MaxValue) Push(x interface{}) {
+	*m = append(*m, x.(int))
 }
-func (l *Lines) Pop() interface{} {
-	old := *l
+func (m *MaxValue) Pop() interface{} {
+	old := *m
 	n := len(old)
 	x := old[n-1]
-	*l = old[:n-1]
+	*m = old[:n-1]
 	return x
 }
 
-// 메모리: 25856KB
-// 시간: 240ms
-// 이분 탐색, 최소 힙
+// 메모리: 9496KB
+// 시간: 296ms
+// 맵, 최대 힙
 func main() {
 	defer writer.Flush()
 	scanner.Split(bufio.ScanWords)
-	N, X = scanInt(), scanInt()
-	inp = make([]int, N)
-	for i := 0; i < N; i++ {
-		inp[i] = scanInt()
-	}
+	Q = scanInt()
+	gorilla = make(map[string]*MaxValue)
 
-	// 1. 필요한 공정 라인의 개수를 이분 탐색으로 구한다
-	l, r := 1, N
-	for l <= r {
-		mid := (l + r) / 2
-
-		// 2. mid개의 공정 라인 개수로 모든 선물을 X시간 안에 제작할 수 있는지 여부
-		flag := check(mid)
-
-		// 3. 제작할 수 있다면
-		if flag {
-			// 공정 라인 개수를 줄이기 위해 r을 mid-1로 갱신
-			r = mid - 1
-		} else {
-			// 제작할 수 없다면
-			// 공정 라인 개수를 늘리기 위해 l을 mid+1로 갱신
-			l = mid + 1
+	for i := 1; i <= Q; i++ {
+		query := scanInt() // 쿼리 번호 입력
+		switch query {
+		case 1:
+			// 쿼리 번호가 1인 경우, 고릴라가 새로운 정보를 얻는 이벤트 발생
+			gorillaGotInformation()
+		case 2:
+			// 쿼리 번호가 2인 경우, 호석이가 고릴라에게 정보를 구매하는 이벤트 발생
+			transaction()
 		}
 	}
 
-	// 문제의 해는 공정 라인 개수를 줄일 수 있는 상한선
-	// 즉, 마지막으로 r을 갱신할 때 사용한 mid값인 r+1이 되어야 한다
-	fmt.Fprintln(writer, r+1)
+	fmt.Fprintln(writer, ans)
 }
 
-// 4. 최소 힙을 사용해 mid개의 공정 라인 개수로 X시간 내에 모든 선물을 제작할 수 있는지 판별
-func check(mid int) bool {
-	idx := 0
+func gorillaGotInformation() {
+	name, k := scanName(), scanInt() // 정보를 얻는 고릴라의 이름과 얻게 되는 정보의 수 입력
+	g, ok := gorilla[name]           // 고릴라가 새로운 정보상인지 확인
 
-	lines := &Lines{}
-	heap.Init(lines)
-
-	// 5. mid개의 공정 라인을 먼저 가동시킨다
-	for i := 1; i <= mid; i++ {
-		heap.Push(lines, inp[idx])
-		idx++
-	}
-
-	// 6. 가장 먼저 완료된 라인의 가동 시간 갱신
-	for idx < N {
-		next := heap.Pop(lines).(int)
-		// 7. idx번째 선물을 제작하기 위해 필요한 시간이 X를 초과한 경우
-		if next+inp[idx] > X {
-			lines = nil
-			// 선물 제작을 완료할 수 없으므로 false 반환
-			return false
-		} else {
-			heap.Push(lines, next+inp[idx])
-			idx++
+	if ok {
+		// 새로운 정보상이 아닌 경우
+		for i := 1; i <= k; i++ {
+			heap.Push(g, scanInt())
 		}
+	} else {
+		// 새로운 정보상인 경우
+		h := &MaxValue{}
+		for i := 1; i <= k; i++ {
+			heap.Push(h, scanInt())
+		}
+		gorilla[name] = h
 	}
-	lines = nil
-	// 모든 선물을 제작할 수 있으므로 true 반환
-	return true
+}
+
+func transaction() {
+	name, number := scanName(), scanInt() // 호석이와 거래할 고릴라와 거래할 정보의 수 입력
+	info, ok := gorilla[name]             // 호석이와 거래할 고릴라가 정보를 가지고 있는지 확인
+
+	if !ok {
+		return // 정보를 가지고 있지 않다면 정보를 구매하지 않고 거래 종료
+	}
+
+	// 정보를 가지고 있다면 가지고 있는 한에서 number 개수 만큼 정보를 구매
+	for info.Len() > 0 && number > 0 {
+		ans += heap.Pop(info).(int)
+		number--
+	}
 }
 
 func scanInt() int {
 	scanner.Scan()
 	n, _ := strconv.Atoi(scanner.Text())
 	return n
+}
+
+func scanName() string {
+	scanner.Scan()
+	return scanner.Text()
 }
