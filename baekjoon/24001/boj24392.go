@@ -11,55 +11,58 @@ var (
 	scanner = bufio.NewScanner(os.Stdin)
 	writer  = bufio.NewWriter(os.Stdout)
 	N, M    int
-	conn    []int // 건물 연결 정보
+	bridge  [1002][1002]int
+	dp      [1002][1002]int
 )
 
-// 메모리: 3452KB
-// 시간: 60ms
-// 분리 집합
+const MOD = 1000000007
+
+// 난이도: Silver 1
+// 메모리: 16572KB
+// 시간: 68ms
+// 분류: 다이나믹 프로그래밍
 func main() {
 	defer writer.Flush()
 	scanner.Split(bufio.ScanWords)
+	Input()
+	Solve()
+}
+
+func Input() {
 	N, M = scanInt(), scanInt()
-	conn = make([]int, N+1)
 	for i := 1; i <= N; i++ {
-		conn[i] = i
-	}
-
-	for i := 1; i <= M; i++ {
-		x, y := scanInt(), scanInt()
-		union(x, y)
-	}
-
-	move := 0
-
-	// conn[from]과 conn[to]가 서로다른 값일 때
-	// from 건물에서 to 건물로 이동하기 위해 밖으로 나와야 한다
-	from := scanInt()
-	for i := 1; i < N; i++ {
-		to := scanInt()
-		if find(from) != find(to) {
-			move++
+		for j := 1; j <= M; j++ {
+			bridge[i][j] = scanInt()
 		}
-		from = to
 	}
-
-	fmt.Fprintln(writer, move)
 }
 
-func find(x int) int {
-	if conn[x] == x {
-		return x
+func Solve() {
+	for i := 1; i <= M; i++ {
+		dp[N][i] = bridge[N][i]
 	}
-	conn[x] = find(conn[x])
-	return conn[x]
+
+	for i := N - 1; i >= 1; i-- {
+		for j := 1; j <= M; j++ {
+			if bridge[i][j] == 1 {
+				dp[i][j] = (dp[i+1][j-1] + dp[i+1][j] + dp[i+1][j+1]) % MOD
+			}
+		}
+	}
+
+	ans := 0
+	for i := 1; i <= M; i++ {
+		ans = (ans + dp[1][i]) % MOD
+	}
+
+	fmt.Fprintln(writer, ans)
 }
 
-func union(x, y int) {
-	x, y = find(x), find(y)
-	if x != y {
-		conn[y] = x
+func max(a, b int) int {
+	if a > b {
+		return a
 	}
+	return b
 }
 
 func scanInt() int {
