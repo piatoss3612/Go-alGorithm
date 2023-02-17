@@ -11,47 +11,61 @@ import (
 var (
 	scanner = bufio.NewScanner(os.Stdin)
 	writer  = bufio.NewWriter(os.Stdout)
-	n, c    int
-	houses  []int
+	N, C    int
+	house   []int
 )
 
+// 난이도: Gold 4
+// 메모리: 6008KB
+// 시간: 68ms
+// 분류: 이분 탐색, 매개 변수 탐색
+// 이 문제 맞은 적이 없는데 왜 업로드되어 있었는지 모르겠네요
 func main() {
 	defer writer.Flush()
 	scanner.Split(bufio.ScanWords)
-	n, c = scanInt(), scanInt()
-	houses = make([]int, n)
-	for i := 0; i < n; i++ {
-		houses[i] = scanInt()
-	}
-	sort.Ints(houses)
-
-	left := 1           // 거리 최솟값
-	right := 1000000000 // 거리 최댓값
-
-	// 최대 거리를 구하기 위한 이분 탐색
-	for left < right {
-		mid := (left + right) / 2
-		// 공유기 사이의 거리(mid)를 충족하는 공유기의 최대 갯수가 c보다 작은 경우
-		if getMaxRouter(mid) < c {
-			right = mid
-		} else {
-			left = mid + 1
-		}
-	}
-	fmt.Fprintln(writer, left-1)
+	Setup()
+	Solve()
 }
 
-func getMaxRouter(dist int) int {
-	cnt := 1
-	prev := houses[0]
+func Setup() {
+	N, C = scanInt(), scanInt()
+	house = make([]int, N+1)
+	for i := 1; i <= N; i++ {
+		house[i] = scanInt()
+	}
+	sort.Ints(house) // 오름차순 정렬
+}
 
-	for i := 1; i < n; i++ {
-		if houses[i]-prev >= dist {
-			cnt += 1
-			prev = houses[i]
+func Solve() {
+	l, r := 0, 1000000000
+	for l <= r {
+		m := (l + r) / 2
+		// 인접한 공유기 사이의 최대 거리를 m으로 잡았을 때 공유기의 개수가 C개 이상인 경우와 아닌 경우
+		if routers(m) {
+			l = m + 1 // 최대 거리를 늘려서 재탐색
+		} else {
+			r = m - 1 // 최대 거리를 줄여서 재탐색
 		}
 	}
-	return cnt
+	fmt.Fprintln(writer, r) // upper bound 출력
+}
+
+func routers(expected int) bool {
+	cnt := 1
+	prev := house[1]
+
+	for i := 2; i <= N; i++ {
+		if house[i]-prev >= expected {
+			cnt += 1
+			prev = house[i]
+		}
+
+		if cnt >= C {
+			return true
+		}
+	}
+
+	return cnt >= C
 }
 
 func scanInt() int {
