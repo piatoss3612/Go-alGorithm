@@ -12,17 +12,17 @@ var (
 	writer  = bufio.NewWriter(os.Stdout)
 
 	N, K int
-	arr  []int
-	tree []int
+	arr  [250001]int
+	tree [200000]int
 )
 
-const MAX = 65537
+const MAX = 65535
 
-// 난이도: Platinum 5
-// 메모리: 5552KB
+// 난이도: platinum 5
+// 메모리: 5332KB
 // 시간: 148ms
 // 분류: 세그먼트 트리, 이분 탐색
-// 참고: https://littlesam95.tistory.com/entry/BOJPlatinum-5-%EB%B0%B1%EC%A4%80-1572-%EC%A4%91%EC%95%99%EA%B0%92C
+// 비고: 1572번과 동일한 문제
 func main() {
 	defer writer.Flush()
 	scanner.Split(bufio.ScanWords)
@@ -33,27 +33,20 @@ func main() {
 
 func Setup() {
 	N, K = scanInt(), scanInt()
-	arr = make([]int, N+1)
-	tree = make([]int, MAX*3)
-	for i := 1; i <= N; i++ {
-		arr[i] = scanInt()
-	}
 }
 
 func Solve() {
 	sum := 0
-	cnt := (K + 1) / 2
 	for i := 1; i <= N; i++ {
-		update(arr[i], 1, 0, MAX, 1) // 세그먼트 트리에 i번째 수를 추가
-		// i가 K보다 크거나 같은 경우
+		arr[i] = scanInt()
+		update(arr[i], 1, 0, MAX, 1)
+
 		if i >= K {
-			// i-K+1부터 i까지의 수 중 K/2번째 수를 찾는다
-			v := query(cnt, 0, MAX, 1)
-			// i-K+1번째 수를 세그먼트 트리에서 제거
+			sum += query((K+1)/2, 0, MAX, 1)
 			update(arr[i-K+1], -1, 0, MAX, 1)
-			sum += v // 구한 수를 더한다
 		}
 	}
+
 	fmt.Fprintln(writer, sum)
 }
 
