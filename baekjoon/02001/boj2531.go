@@ -8,71 +8,65 @@ import (
 )
 
 var (
-	scanner    = bufio.NewScanner(os.Stdin)
-	writer     = bufio.NewWriter(os.Stdout)
+	scanner = bufio.NewScanner(os.Stdin)
+	writer  = bufio.NewWriter(os.Stdout)
+
 	N, d, k, c int
-	eaten      []int
-	dishes     []int
+	plates     []int
+	slide      []int
+	kind       [3001]int
 )
 
 // 난이도: Silver 1
-// 메모리: 1324KB
-// 시간: 8ms
-// 분류: 브루트포스 알고리즘, 두 포인터
+// 메모리: 1348KB
+// 시간: 12ms
+// 분류: 구현, 슬라이딩 윈도우
 func main() {
 	defer writer.Flush()
 	scanner.Split(bufio.ScanWords)
-	Input()
+
+	Setup()
 	Solve()
 }
 
-func Input() {
+func Setup() {
 	N, d, k, c = scanInt(), scanInt(), scanInt(), scanInt()
-	eaten = make([]int, d+1)
-	dishes = make([]int, N+k)
-	for i := 1; i <= N; i++ {
-		dishes[i] = scanInt()
-	}
-	for i := N + 1; i < N+k; i++ {
-		dishes[i] = dishes[i-N]
-	}
+	plates = make([]int, N)
+	slide = make([]int, k)
 }
 
 func Solve() {
-	successive := 0 // 연속으로 선택한 초밥 접시의 수
-	noDupCnt := 0   // 초밥 종류의 중복없이 선택한 접시의 개수
-	ans := 0        // 연속으로 k개의 초밥 접시를 선택했을 때, 초밥의 가짓수의 최댓값
+	dups := 0
+	ans := 0
 
-	l, r := 1, 1 // 두 포인터
-	for l < N {
-		// 연속으로 k개의 초밥 접시를 선택한 경우
-		if successive == k {
-			// 쿠폰으로 먹을 수 있는 초밥을 선택하지 않은 경우
-			if eaten[c] == 0 {
-				ans = max(ans, noDupCnt+1)
-			} else {
-				ans = max(ans, noDupCnt)
-			}
+	for i := 0; i < N+k-1; i++ {
+		pos := i % k
 
-			// 포인터 l을 이동하기 전에
-			// l에 있는 초밥을 선택하지 않은 것으로 처리
-			eaten[dishes[l]]--
-			if eaten[dishes[l]] == 0 {
-				noDupCnt--
+		if slide[pos] != 0 {
+			kind[slide[pos]]--
+			if kind[slide[pos]] > 0 {
+				dups--
 			}
-			successive--
-			l++
 		}
 
-		// 선택한 초밥 접시의 개수가 k보다 작은 경우
-		for successive < k {
-			// 포인터 r이 가리키는 초밥 접시 선택
-			eaten[dishes[r]]++
-			if eaten[dishes[r]] == 1 {
-				noDupCnt++
+		if i < N {
+			plates[i] = scanInt()
+			slide[pos] = plates[i]
+		} else {
+			slide[pos] = plates[i%N]
+		}
+
+		kind[slide[pos]]++
+		if kind[slide[pos]] > 1 {
+			dups++
+		}
+
+		if i >= k-1 {
+			if kind[c] == 0 {
+				ans = max(ans, k-dups+1)
+			} else {
+				ans = max(ans, k-dups)
 			}
-			successive++
-			r++ // 포이터 r 이동
 		}
 	}
 
@@ -86,8 +80,16 @@ func max(a, b int) int {
 	return b
 }
 
-func scanInt() int {
+func scanString() string {
 	scanner.Scan()
-	n, _ := strconv.Atoi(scanner.Text())
+	return scanner.Text()
+}
+
+func mustParseInt(s string) int {
+	n, _ := strconv.Atoi(s)
 	return n
+}
+
+func scanInt() int {
+	return mustParseInt(scanString())
 }
