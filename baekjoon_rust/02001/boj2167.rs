@@ -1,5 +1,9 @@
 use std::io::{stdin, Write};
 
+// 2167번: 2차원 배열의 합
+// https://www.acmicpc.net/problem/2167
+// 메모리: 13424KB, 시간: 12ms
+// 분류: 누적합
 fn main() {
     let mut lines = stdin().lines();
 
