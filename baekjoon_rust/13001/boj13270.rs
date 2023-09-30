@@ -3,6 +3,12 @@ use std::{
     io::{stdin, Write},
 };
 
+// 13270번: 피보나치 치킨
+// https://www.acmicpc.net/problem/13270
+// 난이도: Silver 2
+// 메모리: 13160KB
+// 시간: 4ms
+// 분류: 다이나믹 프로그래밍
 fn main() {
     let mut writer = std::io::BufWriter::new(std::io::stdout());
     let mut lines = stdin().lines();
