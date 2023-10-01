@@ -1,5 +1,11 @@
 use std::io::{stdin, Write};
 
+// 16493번: 최대 페이지 수
+// https://www.acmicpc.net/problem/16493
+// 난이도: Silver 2
+// 메모리: 13156KB
+// 시간: 4ms
+// 분류: 다이나믹 프로그래밍, 배낭 문제
 fn main() {
     let mut writer = std::io::BufWriter::new(std::io::stdout());
     let mut lines = stdin().lines();
